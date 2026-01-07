@@ -11,7 +11,7 @@ impl App {
                 Constraint::Percentage(100 - self.side_width),
             ])
             .split(area);
-        
+
         Paragraph::new("side")
             .block(
                 Block::new()

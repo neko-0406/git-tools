@@ -3,6 +3,7 @@ use std::io;
 use ratatui::{DefaultTerminal, Frame, crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers}, layout::{Constraint, Direction, Layout}, prelude, style::{Color, Style}, text::Text, widgets::{Block, Borders, Paragraph, Widget}};
 
 mod page;
+mod github_api;
 
 #[derive(Default)]
 pub struct App {
