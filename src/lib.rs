@@ -1,13 +1,15 @@
 use std::io;
 
-use ratatui::{DefaultTerminal, Frame, crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers}, layout::{Constraint, Direction, Layout}, prelude, style::{Color, Style}, text::Text, widgets::{Block, Borders, Paragraph, Widget}};
+use ratatui::{DefaultTerminal, Frame, crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers}, prelude, widgets::Widget};
+
+use crate::github_api::request::GitHubAPI;
 
 mod page;
 mod github_api;
 
 #[derive(Default)]
 pub struct App {
-    pub github_token: String,
+    pub github_api: GitHubAPI,
     pub side_width: u16,
     pub focus: FocusWidget,
     pub display_page: DisplayPage,
@@ -32,8 +34,10 @@ impl App {
         // 環境変数の読み込み
         dotenv::dotenv().ok();
         // GitHubのアクセストークン取得・無ければアプリを落とす
-        self.github_token =
+        let github_token =
             dotenv::var("GITHUB_TOKEN").expect("GitHubへのアクセストークンが見つかりませんでした");
+        self.github_api = GitHubAPI::init(&github_token);
+        
         self.side_width = 20;
         while !self.exit {
             terminal.draw(|frame| self.draw(frame))?;
