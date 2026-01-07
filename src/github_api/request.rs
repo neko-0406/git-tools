@@ -29,7 +29,7 @@ impl GitHubAPI {
         
         Self { url: url.to_owned(), client: client }
     }
-    
+
     pub fn request(&self, end_point: &str, method: Method) -> RequestBuilder {
         let url = format!("{}{}", &self.url, end_point);
         match method {
