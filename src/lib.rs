@@ -2,12 +2,15 @@ use std::io;
 
 use ratatui::{DefaultTerminal, Frame, crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers}, layout::{Constraint, Direction, Layout}, prelude, style::{Color, Style}, text::Text, widgets::{Block, Borders, Paragraph, Widget}};
 
+mod page;
+
 #[derive(Default)]
 pub struct App {
-    github_token: String,
-    side_width: u16,
-    focus: FocusWidget,
-    exit: bool,
+    pub github_token: String,
+    pub side_width: u16,
+    pub focus: FocusWidget,
+    pub display_page: DisplayPage,
+    pub exit: bool,
 }
 
 #[derive(Default)]
@@ -15,6 +18,12 @@ pub enum FocusWidget {
     #[default]
     SideMenu,
     MainContent
+}
+
+#[derive(Default)]
+pub enum DisplayPage {
+    #[default]
+    Top
 }
 
 impl App {
@@ -72,38 +81,8 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: prelude::Rect, buf: &mut prelude::Buffer) {
-        let layout = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(vec![
-                Constraint::Percentage(self.side_width),
-                Constraint::Percentage(100 - self.side_width),
-            ])
-            .split(area);
-        
-        Paragraph::new("side")
-            .block(
-                Block::new()
-                    .borders(Borders::ALL)
-                    .border_style(
-                        match self.focus {
-                            FocusWidget::SideMenu => Color::Cyan,
-                            _ => Color::default()
-                        }
-                    )
-            )
-            .render(layout[0], buf);
-
-        Paragraph::new("main")
-            .block(
-                Block::new()
-                    .borders(Borders::ALL)
-                    .border_style(
-                        match self.focus {
-                            FocusWidget::MainContent => Color::Cyan,
-                            _ => Color::default()
-                        }
-                    )
-            )
-            .render(layout[1], buf);
+        match self.display_page {
+            DisplayPage::Top => self.render_top_page(area, buf),
+        }
     }
 }
